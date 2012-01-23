@@ -2,7 +2,7 @@
 #---Prefs---
 PROJECT=led_shirt
 MMCU=atmega168
-F_CPU=1000000 #1 MHz
+F_CPU=8000000 #1 MHz
 FUSEBITS=0x62
 #-----------
 
