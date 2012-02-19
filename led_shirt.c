@@ -10,10 +10,26 @@ OC1B (PB4) BLU -|    |- RED (PB1) OC0B
 */
 
 #include <avr/io.h>
-#include <avr/interrupt.h>
+//#include <avr/interrupt.h>
 #include <util/delay.h>
 
 static volatile uint8_t delay = 5; // delay time (ms)
+
+void fadeup(volatile uint8_t *OCRnx) {
+ uint8_t i;
+ for (i = 0; i < 256; i++) { 
+  *OCRnx = i; // Set Output Compair Register 0 B
+  _delay_ms(15); // Delay for a few ms
+ }
+}
+
+void fadedown(volatile uint8_t *OCRnx) {
+ uint8_t i;
+ for (i = 255; i > 0; i--) { 
+  *OCRnx = i; // Set Output Compair Register 0 A
+  _delay_ms(15); // Delay for a few ms
+ }
+}
 
 int main(void) {
  DDRB |= 1<<PB0 | 1<<PB1 | 1<<PB4; // PB0, PB1, PB4 output
@@ -32,59 +48,39 @@ int main(void) {
  OCR1C = 255; // Resets line to high when timer reaches max value
 
  //Interrupt setup
- MCUCR |= 1<<ISC01 | 1<<ISC00; // The rising edge of INT0 generates an interrupt request.
- GIMSK |= 1<<INT0; // Enable INT0 on PB2
- sei(); // Enable interrupts
-
- volatile uint8_t i = 0;
+// MCUCR |= 1<<ISC01 | 1<<ISC00; // The rising edge of INT0 generates an interrupt request.
+// GIMSK |= 1<<INT0; // Enable INT0 on PB2
+// sei(); // Enable interrupts
 
  while(1) { // Loop forever
 
   // fade from blue to violet
-  for (i = 0; i < 256; i++) { 
-  OCR0B = i; // Set Output Compair Register 0 B
-   _delay_ms(delay); // Delay for a few ms
-  } 
+  fadeup(&OCR0B);
 
   // fade from violet to red
-  for (i = 255; i > 0; i--) { 
-  OCR0A = i; // Set Output Compair Register 0 A
-   _delay_ms(delay); // Delay for a few ms
-  } 
+  fadedown(&OCR0A);
 
   // fade from red to yellow
-  for (i = 0; i < 256; i++) { 
-  OCR1B = i; // Set Output Compair Register 1 B
-   _delay_ms(delay); // Delay for a few ms
-  } 
+  fadeup(&OCR1B);
 
   // fade from yellow to green
-  for (i = 255; i > 0; i--) { 
-  OCR0B = i; // Set Output Compair Register 0 B
-   _delay_ms(delay); // Delay for a few ms
-  } 
+  fadedown(&OCR0B);
 
   // fade from green to teal
-  for (i = 0; i < 256; i++) { 
-  OCR0A = i; // Set Output Compair Register 0 A
-   _delay_ms(delay); // Delay for a few ms
-  } 
+  fadeup(&OCR0A); 
 
   // fade from teal to blue
-  for (i = 255; i > 0; i--) { 
-  OCR1B = i; // Set Output Compair Register 1 B
-   _delay_ms(delay); // Delay for a few ms
-  } 
+  fadedown(&OCR1B);
  }
 }
 
 // Pushbutton interrupt
-SIGNAL(INT0_vect)  {
- cli(); // Disable interrupts
- delay += 5; // Add 5 ms to delay time
- if (delay > 15) {
-  delay = 5; // Set delay back to 5 ms
- }
- _delay_ms(5); // Debounce delay for pushbutton switch
- sei(); // Reenable interrupts
-}
+//SIGNAL(INT0_vect)  {
+// cli(); // Disable interrupts
+// delay += 5; // Add 5 ms to delay time
+// if (delay > 15) {
+//  delay = 5; // Set delay back to 5 ms
+// }
+// _delay_ms(5); // Debounce delay for pushbutton switch
+// sei(); // Reenable interrupts
+//}
