@@ -3,7 +3,7 @@
 PROJECT=led_shirt
 MMCU=attiny25
 F_CPU=8000000 #8 MHz
-FUSEBITS=0x62
+FUSEBITS=0xE2
 #-----------
 
 
@@ -27,7 +27,7 @@ program: $(PROJECT).hex
 	avrdude $(AVRDUDEFLAGS) -e -U flash:w:$(PROJECT).hex
 
 burn-fuse:
-	avrdude $(AVRDUDE_FLAGS) -u -U lfuse:w:$(FUSEBITS):m
+	avrdude $(AVRDUDEFLAGS) -u -U lfuse:w:$(FUSEBITS):m
 
 # Display size of file.
 filesize:
