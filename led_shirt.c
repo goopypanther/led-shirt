@@ -12,7 +12,7 @@ OC1B (PB4) BLU -|    |- RED (PB1) OC0B
 #include <avr/io.h>
 #include <util/delay.h>
 
-#define FADEDELAY 39 // Millisecond delay between changes to OCRnx, 39ms ~ 1 min per color cycle
+#define FADEDELAY 80 // Millisecond delay between changes to OCRnx, 39ms ~ 1 min per color cycle
 
 int main(void) {
  DDRB |= 1<<PB0 | 1<<PB1 | 1<<PB4; // PB0, PB1, PB4 output
